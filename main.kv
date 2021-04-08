@@ -1,0 +1,229 @@
+Screen:
+    MDToolbar:
+        title: 'Hand Cricket'
+        left_action_items: [["menu", lambda x: nav_drawer.toggle_nav_drawer()]]
+        pos_hint: {"top": 1}
+        elevation: 10
+    Widget:
+
+    NavigationLayout:
+        ScreenManager:
+            id: screen_manager
+
+            HomeScreen:
+            GameMenuScreen:
+            GameScreen:
+
+
+        MDNavigationDrawer:
+            id: nav_drawer
+            ContentNavigationDrawer:
+                screen_manager: screen_manager
+                nav_drawer: nav_drawer
+
+                orientation: 'vertical'
+                padding: "8dp"
+                spacing: "8dp"
+                Image:
+                    id: avatar
+                    size_hint: (1,1)
+                    source: "avatar.webp"
+                MDLabel:
+                    text: "Hand Cricket"
+                    font_style: "Subtitle1"
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                ScrollView:
+                    DrawerList:
+                        id: md_list
+
+                        MDList:
+                            OneLineIconListItem:
+                                text: "Home"
+                                on_press:
+                                    nav_drawer.set_state("close")
+                                    screen_manager.current = "home"
+                                IconLeftWidget:
+                                    icon: "home-variant"
+
+
+                            OneLineIconListItem:
+                                text: "Game"
+                                on_press:
+                                    nav_drawer.set_state("close")
+                                    screen_manager.current = "game_menu"
+                                IconLeftWidget:
+                                    icon: "gamepad-variant"
+
+                            OneLineIconListItem:
+                                text: "Exit"
+                                on_press:
+                                    nav_drawer.set_state("close")
+                                    app.stop()
+                                IconLeftWidget:
+                                    icon: "exit-to-app"
+
+<HomeScreen>:
+    name: 'home'
+    Image:
+        id: bg
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        size_hint: (1,1)
+        source: "hand_2.jpg"
+
+    MDBottomAppBar:
+        MDToolbar:
+            icon: 'cricket'
+            type: 'bottom'
+            mode: 'end'
+
+<ChoiceCheck@MDCheckbox>:
+    group: 'group1'
+    size_hint: None, None
+    size: dp(48), dp(48)
+
+<TossCheck@MDCheckbox>:
+    group: 'group2'
+    size_hint: None, None
+    size: dp(48), dp(48)
+
+<GameMenuScreen>:
+    name: 'game_menu'
+    Image:
+        id: game_menu_bg
+        source: 'hand_1.png'
+        size_hint: 1, 0.6
+        pos_hint: {'center_x':0.5, 'y':0.5}
+
+    MDFloatLayout:
+        id: choice_layout
+        MDLabel:
+            text: 'Batting'
+            theme_text_color: 'Primary'
+            pos_hint: {'center_x': .58, 'center_y': .6}
+        ChoiceCheck:
+            active: False
+            pos_hint: {'center_x': .3, 'center_y': .6}
+            on_active: root.on_choice_checkbox_active(1, *args)
+
+        MDLabel:
+            text: 'Bowling'
+            theme_text_color: 'Primary'
+            pos_hint: {'center_x': 0.95, 'center_y': .6}
+        ChoiceCheck:
+            pos_hint: {'center_x': .7, 'center_y': .6}
+            on_active: root.on_choice_checkbox_active(2, *args)
+
+    MDFloatLayout:
+        id: toss_layout
+        MDLabel:
+            text: 'Head'
+            theme_text_color: 'Primary'
+            pos_hint: {'center_x': .6, 'center_y': .5}
+        TossCheck:
+            active: False
+            pos_hint: {'center_x': .3, 'center_y': .5}
+            on_active: root.on_toss_checkbox_active(1, *args)
+
+        MDLabel:
+            text: 'Tail'
+            theme_text_color: 'Primary'
+            pos_hint: {'center_x': 1, 'center_y': .5}
+        TossCheck:
+            pos_hint: {'center_x': .7, 'center_y': .5}
+            on_active: root.on_toss_checkbox_active(2, *args)
+
+    MDTextField:
+        id: text_field
+        hint_text: "Number of wickets"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.4}
+        size_hint: (0.5, 0.1)
+        mode: "rectangle"
+
+    MDRectangleFlatIconButton:
+        icon: 'google-play'
+        text: 'Play'
+        pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+        on_release:
+            root.submit()
+            root.manager.current = 'game'
+
+    MDRectangleFlatIconButton:
+        icon: 'stop-circle'
+        text: 'Quit'
+        pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+        on_release:
+            root.stopMusic()
+            root.manager.current= "home"
+
+    MDFloatingActionButtonSpeedDial:
+        data: root.data
+        root_button_anim: True
+        hint_animation: True
+        rotation_root_button: True
+        callback: root.callback
+
+<GameScreen>:
+    name: 'game'
+
+    FloatLayout:
+        Label:
+            text: root.time_count
+            font_size: 15
+            size_hint: (0.5, 0.1)
+            pos_hint: {'x': 0.65, 'y': 0.89}
+
+        Image:
+            source: root.human_image
+            size_hint: (0.5, 0.1)
+            pos_hint: {'x': -0.12, 'y': 0.825}
+
+        Label:
+            text: root.human_score_text
+            font_size: 15
+            size_hint: (0.5, 0.1)
+            pos_hint: {'x': -0.01, 'y': 0.84}
+
+        Label:
+            text: root.target_text
+            font_size: 15
+            size_hint: (0.5, 0.1)
+            pos_hint: {'x': 0.25, 'y': 0.84}
+
+        Label:
+            text: root.app_score_text
+            font_size: 15
+            size_hint: (0.5, 0.1)
+            pos_hint: {'x': 0.54, 'y': 0.84}
+
+        Image:
+            source: root.app_image
+            size_hint: (0.5, 0.1)
+            pos_hint: {'x': 0.65, 'y': 0.825}
+
+        Image:
+            id: vid
+            size_hint: 1, 0.6
+            allow_stretch: True
+            keep_ratio: True
+            pos_hint: {'center_x':0.5, 'top':0.875}
+
+        Button:
+            text: 'Play'
+            pos_hint: {"x":0.0, "y":0.225}
+            size_hint: 1.0, 0.1
+            font_size: 25
+            on_release: root.gamePlay()
+
+        Button:
+            text: 'Pause'
+            pos_hint: {"x":0.0, "y":0.125}
+            size_hint: 1.0, 0.1
+            font_size: 25
+            on_release: root.stop_vid()
+
+        MDBottomAppBar:
+            MDToolbar:
+                icon: 'cricket'
+                type: 'bottom'
+                mode: 'end'
